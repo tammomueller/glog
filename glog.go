@@ -558,8 +558,6 @@ func (l *loggingT) header(s severity) *buffer {
 	// It's worth about 3X. Fprintf is hard.
 	year, month, day := now.Date()
 	hour, minute, second := now.Clock()
-//	buf.tmp[0] = severityChar[s]
-//	buf.tmp[1] = ' '
 	buf.nDigits(4, 0, int(year))
 	buf.tmp[4] = '-'
 	buf.twoDigits(5, int(month))
@@ -583,7 +581,7 @@ func (l *loggingT) header(s severity) *buffer {
 	buf.tmp[n+1] = ' '
 	buf.Write(buf.tmp[:n+2])
 	buf.tmp[0] = '['
-	buf.nChars(severityNameLength[s], 1, severityName[s]) // TODO: should be TID
+	buf.nChars(severityNameLength[s], 1, severityName[s])
 	buf.tmp[1+severityNameLength[s]] = ']'
 	buf.tmp[2+severityNameLength[s]] = ' '
 	buf.Write(buf.tmp[:3+severityNameLength[s]])
