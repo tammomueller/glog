@@ -565,16 +565,16 @@ func (l *loggingT) header(s severity) *buffer {
 	buf.twoDigits(8, day)
 	buf.tmp[10] = ' '
 	buf.twoDigits(11, hour)
-	buf.tmp[12] = ':'
-	buf.twoDigits(13, minute)
-	buf.tmp[15] = ':'
-	buf.twoDigits(16, second)
-	buf.tmp[18] = '.'
-	buf.nDigits(6, 19, now.Nanosecond()/1000)
-	buf.tmp[25] = ' '
-	buf.nDigits(5, 26, pid) // TODO: should be TID
-	buf.tmp[31] = ' '
-	buf.Write(buf.tmp[:32])
+	buf.tmp[13] = ':'
+	buf.twoDigits(14, minute)
+	buf.tmp[16] = ':'
+	buf.twoDigits(17, second)
+	buf.tmp[19] = '.'
+	buf.nDigits(6, 20, now.Nanosecond()/1000)
+	buf.tmp[26] = ' '
+	buf.nDigits(5, 27, pid) // TODO: should be TID
+	buf.tmp[32] = ' '
+	buf.Write(buf.tmp[:33])
 	buf.WriteString(file)
 	buf.tmp[0] = ':'
 	n := buf.someDigits(1, line)
