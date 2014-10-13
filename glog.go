@@ -109,6 +109,12 @@ var severityName = []string{
 	errorLog:   "ERROR",
 	fatalLog:   "FATAL",
 }
+var severityNameLength = []int{
+	infoLog:    len(severityName[0]),
+	warningLog: len(severityName[1]),
+	errorLog:   len(severityName[2]),
+	fatalLog:   len(severityName[3]),
+}
 
 // get returns the value of the severity.
 func (s *severity) get() severity {
@@ -550,29 +556,37 @@ func (l *loggingT) header(s severity) *buffer {
 
 	// Avoid Fprintf, for speed. The format is so simple that we can do it quickly by hand.
 	// It's worth about 3X. Fprintf is hard.
-	_, month, day := now.Date()
+	year, month, day := now.Date()
 	hour, minute, second := now.Clock()
-	buf.tmp[0] = severityChar[s]
-	buf.twoDigits(1, int(month))
-	buf.twoDigits(3, day)
-	buf.tmp[5] = ' '
-	buf.twoDigits(6, hour)
-	buf.tmp[8] = ':'
-	buf.twoDigits(9, minute)
-	buf.tmp[11] = ':'
-	buf.twoDigits(12, second)
-	buf.tmp[14] = '.'
-	buf.nDigits(6, 15, now.Nanosecond()/1000)
-	buf.tmp[21] = ' '
-	buf.nDigits(5, 22, pid) // TODO: should be TID
-	buf.tmp[27] = ' '
-	buf.Write(buf.tmp[:28])
+//	buf.tmp[0] = severityChar[s]
+//	buf.tmp[1] = ' '
+	buf.nDigits(4, 0, int(year))
+	buf.tmp[4] = '-'
+	buf.twoDigits(5, int(month))
+	buf.tmp[7] = '-'
+	buf.twoDigits(8, day)
+	buf.tmp[10] = ' '
+	buf.twoDigits(11, hour)
+	buf.tmp[12] = ':'
+	buf.twoDigits(13, minute)
+	buf.tmp[15] = ':'
+	buf.twoDigits(16, second)
+	buf.tmp[18] = '.'
+	buf.nDigits(6, 19, now.Nanosecond()/1000)
+	buf.tmp[25] = ' '
+	buf.nDigits(5, 26, pid) // TODO: should be TID
+	buf.tmp[31] = ' '
+	buf.Write(buf.tmp[:32])
 	buf.WriteString(file)
 	buf.tmp[0] = ':'
 	n := buf.someDigits(1, line)
-	buf.tmp[n+1] = ']'
-	buf.tmp[n+2] = ' '
-	buf.Write(buf.tmp[:n+3])
+	buf.tmp[n+1] = ' '
+	buf.Write(buf.tmp[:n+2])
+	buf.tmp[0] = '['
+	buf.nChars(severityNameLength[s], 1, severityName[s]) // TODO: should be TID
+	buf.tmp[1+severityNameLength[s]] = ']'
+	buf.tmp[2+severityNameLength[s]] = ' '
+	buf.Write(buf.tmp[:3+severityNameLength[s]])
 	return buf
 }
 
@@ -592,6 +606,12 @@ func (buf *buffer) nDigits(n, i, d int) {
 	for j := n - 1; j >= 0; j-- {
 		buf.tmp[i+j] = digits[d%10]
 		d /= 10
+	}
+}
+
+func (buf *buffer) nChars(n,i int,s string){
+	for j := n -1; j>=0;j-- {
+		buf.tmp[i+j] = s[j]
 	}
 }
 
