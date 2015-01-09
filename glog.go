@@ -607,8 +607,8 @@ func (buf *buffer) nDigits(n, i, d int) {
 	}
 }
 
-func (buf *buffer) nChars(n,i int,s string){
-	for j := n -1; j>=0;j-- {
+func (buf *buffer) nChars(n, i int, s string) {
+	for j := n - 1; j >= 0; j-- {
 		buf.tmp[i+j] = s[j]
 	}
 }
